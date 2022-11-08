@@ -19,10 +19,10 @@ app.get("/", function (req, res) {
 });
 
 
-// // your first API endpoint... 
-// app.get("/api/hello", function (req, res) {
-//   res.json({greeting: 'hello API'});
-// });
+// Serve up current date if api is called with no input.
+app.get('/api', function(req, res) {
+  res.json({date: new Date()});
+});
 
 app.get("/api/:date", function(req, res) {
   let response_value = new Date(req.params.date);
