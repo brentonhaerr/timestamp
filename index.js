@@ -19,19 +19,33 @@ app.get("/", function (req, res) {
 });
 
 
-// Serve up current date if api is called with no input.
-app.get('/api', function(req, res) {
-  res.json({date: new Date()});
+// Provide current date when blank API call received.
+app.get("/api", function (req, res) {
+  res.json(convertDateToJSON(new Date()));
 });
 
+// Convert valid dates and UNIX time codes to time stamp JSON object.
 app.get("/api/:date", function(req, res) {
   let response_value = new Date(req.params.date);
-  res.json({ input: response_value });
+
+  // Reject if we receive an invalid date.
+  if (!validateDate(response_value)) {
+    res.json({error: "Invalid Date"});
+  }
+
+  res.json(convertDateToJSON(response_value));
 });
+
+function convertDateToJSON(date) {
+  return { unix: date.valueOf(), utc: date.toUTCString() }
+}
+
+function validateDate(date) {
+  if (date == "Invalid Date") return false;
+  return true;
+}
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
-
-console.log("Running!");
