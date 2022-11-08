@@ -30,10 +30,12 @@ app.get("/api/:date", function(req, res) {
 
   // Handle an input of just digits as a unix timestamp.
   if (isUnixTime(req.params.date)) {
-    // console.log("Received a UNIX timestamp!");
+    console.log("Received a UNIX timestamp!");
     res.json(convertUNIXToDate(req.params.date));
     return;
   }
+
+  console.log("Not a unix date.");
 
   // Reject if we receive an invalid date.
   if (!validateDate(response_value)) {
@@ -42,15 +44,20 @@ app.get("/api/:date", function(req, res) {
     return;
   }
 
+  console.log("Not an invalid date.");
+
   // Convert valid dates into the timestamp response object.
   res.json(convertDateToJSON(response_value));
 });
 
 // Check to see if input is only digits, which we treat as a UNIX timestamp.
 function isUnixTime(input) {
-  if (input.match(/^\d+$/ != null)) {
+  console.log(`Checking ${input} to see if only integer.`);
+  if (/^[0-9]+$/.test(input)) {
+    console.log("Integer only.");
     return true;
   }
+  console.log("Mixed string.");
   return false;
 }
 
@@ -72,6 +79,10 @@ function validateDate(date) {
 }
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
+// var listener = app.listen(process.env.PORT, function () {
+//   console.log('Your app is listening on port ' + listener.address().port);
+// });
+
+var listener = app.listen(3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
