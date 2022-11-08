@@ -27,34 +27,45 @@ app.get("/api", function (req, res) {
 // Convert valid dates and UNIX time codes to time stamp JSON object.
 app.get("/api/:date", function(req, res) {
   let response_value = new Date(req.params.date);
-  console.log(req.params.date);
-  (req.params.date)
 
-  if (req.params.date.match(/^\d+$/) != null) {
-    console.log("Received a UNIX timestamp!");
+  // Handle an input of just digits as a unix timestamp.
+  if (isUnixTime(req.params.date)) {
+    // console.log("Received a UNIX timestamp!");
     res.json(convertUNIXToDate(req.params.date));
     return;
   }
 
-  console.log("Not a UNIX timestamp.");
-
   // Reject if we receive an invalid date.
   if (!validateDate(response_value)) {
+    // console.log("Received an invalid date.");
     res.json({error: "Invalid Date"});
+    return;
   }
 
+  // Convert valid dates into the timestamp response object.
   res.json(convertDateToJSON(response_value));
 });
 
+// Check to see if input is only digits, which we treat as a UNIX timestamp.
+function isUnixTime(input) {
+  if (input.match(/^\d+$/ != null)) {
+    return true;
+  }
+  return false;
+}
+
+// Create the response object for unix dates.
 function convertUNIXToDate(unix) {
   let date = new Date(Number(unix));
   return { unix, utc: date.toUTCString() };
 }
 
+// Create response object for valid dates.
 function convertDateToJSON(date) {
   return { unix: date.valueOf(), utc: date.toUTCString() }
 }
 
+// Simple checking if date input was not purely digits.
 function validateDate(date) {
   if (date == "Invalid Date") return false;
   return true;
