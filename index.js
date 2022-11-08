@@ -27,6 +27,16 @@ app.get("/api", function (req, res) {
 // Convert valid dates and UNIX time codes to time stamp JSON object.
 app.get("/api/:date", function(req, res) {
   let response_value = new Date(req.params.date);
+  console.log(req.params.date);
+  (req.params.date)
+
+  if (req.params.date.match(/^\d+$/) != null) {
+    console.log("Received a UNIX timestamp!");
+    res.json(convertUNIXToDate(req.params.date));
+    return;
+  }
+
+  console.log("Not a UNIX timestamp.");
 
   // Reject if we receive an invalid date.
   if (!validateDate(response_value)) {
@@ -35,6 +45,11 @@ app.get("/api/:date", function(req, res) {
 
   res.json(convertDateToJSON(response_value));
 });
+
+function convertUNIXToDate(unix) {
+  let date = new Date(Number(unix));
+  return { unix, utc: date.toUTCString() };
+}
 
 function convertDateToJSON(date) {
   return { unix: date.valueOf(), utc: date.toUTCString() }
